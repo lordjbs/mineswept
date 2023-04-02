@@ -1,5 +1,20 @@
 import './style.css'
 
+const Digit = ({}) => {
+  const el = document.createElement("div");
+  el.className = "digit"
+
+  const string = "123";
+
+  string.split("").map((v) => {string.split('')
+    const el2 = document.createElement("img");
+    el2.setAttribute('src', `/digit/${v}.svg`)
+    el.appendChild(el2);
+  });
+
+  return el
+}
+
 const Button = ({
   dataId,
   bomb,
@@ -128,8 +143,7 @@ const app = document.querySelector("#app");
 
 const header = document.createElement('header');
 
-const bombs = document.createElement('div')
-bombs.textContent = "0";
+const bombs = Digit({});
 
 const status = document.createElement("button");
 status.setAttribute('type', 'button')
@@ -138,8 +152,7 @@ const statusImage = document.createElement("img");
 statusImage.setAttribute('src', '/faces/smile.svg')
 status.appendChild(statusImage);
 
-const timer = document.createElement("div");
-timer.textContent = "0";
+const timer = Digit({});
 
 header.appendChild(bombs)
 header.appendChild(status)
@@ -147,7 +160,7 @@ header.appendChild(timer)
 
 const board = document.createElement('section')
 board.className = "board"
-board.appendChild(generateGrid(12, 12))
+board.appendChild(generateGrid(9, 12))
 
 if ( app ) {
   app.appendChild(header);

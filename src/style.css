@@ -1,7 +1,10 @@
 :root {
   --button-size: 2rem;
+  
   --grid-gap: 0;
   --grid-border: calc(var(--button-size) * .2);
+
+  --digit-border: calc(var(--button-size) * .05);
 
   background-color: #BDBDBD;
 }
@@ -23,8 +26,13 @@ html {
 
 header {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   margin-bottom: 1rem;
+  border: calc(var(--button-size) * .1) solid transparent;
+  border-image: url('border/inset.svg') round;
+  border-image-slice: 12.5%;
+  padding: .5rem .75rem;
 }
 
 header button {
@@ -32,7 +40,7 @@ header button {
   background: none;
   border: none;
   border: var(--grid-border) solid transparent;
-  border-image: url('./border/outset.svg') round;
+  border-image: url('border/outset.svg') round;
   border-image-slice: 18.75%;
   display: flex;
   align-items: center;
@@ -40,8 +48,8 @@ header button {
 }
 
 header button:active {
-  border-image: url('./border/inset.svg') round;
-  border-image-slice: 18.75%;
+  border-image: url('border/inset.svg') round;
+  border-image-slice: 12.5%;
 }
 
 header button img {
@@ -52,7 +60,7 @@ header button img {
 
 .board {
   border: var(--grid-border) solid transparent;
-  border-image: url('./border/inset-thick.svg') round;
+  border-image: url('border/inset-thick.svg') round;
   border-image-slice: 18.75%;
 }
 
@@ -60,7 +68,7 @@ header button img {
   display: flex;
   flex-direction: column;
   gap: var(--grid-gap);
-  background-image: url('/field.svg');
+  background-image: url('/board/field.svg');
   background-size: var(--button-size) var(--button-size);
 }
 
@@ -79,7 +87,7 @@ header button img {
 }
 
 .grid button {
-  background-image: url('/button.svg');
+  background-image: url('/board/button.svg');
   background-repeat: no-repeat;
   background-size: 100%;
 }
@@ -94,15 +102,28 @@ header button img {
 }
 
 .grid button.active.bomb {
-  background-image: url('/bomb-exploded.svg');
+  background-image: url('/board/bomb-exploded.svg');
 }
 
-.grid button.active[data-surround="0"] { background-image: url('/number-0.svg'); }
-.grid button.active[data-surround="1"] { background-image: url('/number-1.svg'); }
-.grid button.active[data-surround="2"] { background-image: url('/number-2.svg'); }
-.grid button.active[data-surround="3"] { background-image: url('/number-3.svg'); }
-.grid button.active[data-surround="4"] { background-image: url('/number-4.svg'); }
-.grid button.active[data-surround="5"] { background-image: url('/number-5.svg'); }
-.grid button.active[data-surround="6"] { background-image: url('/number-6.svg'); }
-.grid button.active[data-surround="7"] { background-image: url('/number-7.svg'); }
-.grid button.active[data-surround="8"] { background-image: url('/number-8.svg'); }
+.grid button.active[data-surround="0"] { background-image: url('/board/number-0.svg'); }
+.grid button.active[data-surround="1"] { background-image: url('/board/number-1.svg'); }
+.grid button.active[data-surround="2"] { background-image: url('/board/number-2.svg'); }
+.grid button.active[data-surround="3"] { background-image: url('/board/number-3.svg'); }
+.grid button.active[data-surround="4"] { background-image: url('/board/number-4.svg'); }
+.grid button.active[data-surround="5"] { background-image: url('/board/number-5.svg'); }
+.grid button.active[data-surround="6"] { background-image: url('/board/number-6.svg'); }
+.grid button.active[data-surround="7"] { background-image: url('/board/number-7.svg'); }
+.grid button.active[data-surround="8"] { background-image: url('/board/number-8.svg'); }
+
+.digit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--digit-border) solid transparent;
+  border-image: url('border/inset-thin.svg') round;
+  border-image-slice: 6.25%;
+}
+
+.digit img {
+  width: calc(var(--button-size) * .75)
+}
