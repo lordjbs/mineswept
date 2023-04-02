@@ -1,0 +1,63 @@
+:root {
+  --button-size: 2rem;
+  --grid-gap: 0;
+  --grid-border: calc(var(--button-size) * .2);
+
+  background-color: #BDBDBD;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#app {
+  border: var(--grid-border) solid transparent;
+  border-image: url('./border-inset.svg') round;
+  border-image-slice: 18.75%;
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--grid-gap);
+  
+  background-image: url('/field.svg');
+  background-size: var(--button-size) var(--button-size);
+}
+
+.grid div {
+  display: flex;
+  flex-direction: row;
+  gap: var(--grid-gap);
+}
+
+.grid button {
+  appearance: none;
+  background: none;
+  border: none;
+  width: var(--button-size);
+  height: var(--button-size);
+}
+
+.grid button {
+  background-image: url('/button.svg');
+  background-repeat: no-repeat;
+  background-size: 100%;
+}
+
+.grid button.active {
+  background: none;
+}
+
+.grid button.active.bomb {
+  background-image: url('/bomb.svg');
+  background-repeat: no-repeat;
+  background-size: 100%;
+}
