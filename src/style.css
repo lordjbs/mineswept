@@ -56,8 +56,21 @@ html {
   background: none;
 }
 
-.grid button.active.bomb {
-  background-image: url('/bomb.svg');
+.grid button.active {
   background-repeat: no-repeat;
   background-size: 100%;
 }
+
+.grid button.active.bomb {
+  background-image: url('/bomb-exploded.svg');
+}
+
+.grid button.active[data-surround="0"] { background-image: url('/number-0.svg'); }
+.grid button.active[data-surround="1"] { background-image: url('/number-1.svg'); }
+.grid button.active[data-surround="2"] { background-image: url('/number-2.svg'); }
+.grid button.active[data-surround="3"] { background-image: url('/number-3.svg'); }
+.grid button.active[data-surround="4"] { background-image: url('/number-4.svg'); }
+.grid button.active[data-surround="5"] { background-image: url('/number-5.svg'); }
+.grid button.active[data-surround="6"] { background-image: url('/number-6.svg'); }
+.grid button.active[data-surround="7"] { background-image: url('/number-7.svg'); }
+.grid button.active[data-surround="8"] { background-image: url('/number-8.svg'); }
