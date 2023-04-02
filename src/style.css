@@ -10,6 +10,10 @@
   box-sizing: border-box;
 }
 
+button {
+  cursor: pointer;
+}
+
 html {
   min-height: 100vh;
   display: flex;
@@ -17,9 +21,38 @@ html {
   justify-content: center;
 }
 
-#app {
+header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+header button {
+  appearance: none;
+  background: none;
+  border: none;
   border: var(--grid-border) solid transparent;
-  border-image: url('./border-inset.svg') round;
+  border-image: url('./border/outset.svg') round;
+  border-image-slice: 18.75%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+header button:active {
+  border-image: url('./border/inset.svg') round;
+  border-image-slice: 18.75%;
+}
+
+header button img {
+  width: calc(var(--button-size) * 1.25);
+  height: calc(var(--button-size) * 1.25);
+  display: inline-block;
+}
+
+.board {
+  border: var(--grid-border) solid transparent;
+  border-image: url('./border/inset-thick.svg') round;
   border-image-slice: 18.75%;
 }
 
@@ -27,7 +60,6 @@ html {
   display: flex;
   flex-direction: column;
   gap: var(--grid-gap);
-  
   background-image: url('/field.svg');
   background-size: var(--button-size) var(--button-size);
 }

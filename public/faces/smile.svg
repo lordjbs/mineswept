@@ -1,0 +1,21 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M10 4H15V5H10V4ZM15 5H17V6H15V5Z" fill="black"/>
+<path d="M17 6H18V7H17V6Z" fill="black"/>
+<path d="M7 6H8V7H7V6Z" fill="black"/>
+<path d="M6 7H7V8H6V7Z" fill="black"/>
+<path d="M6 17H7V18H6V17Z" fill="black"/>
+<path d="M7 18H8V19H7V18Z" fill="black"/>
+<path d="M17 18H18V19H17V18Z" fill="black"/>
+<path d="M18 17H19V18H18V17Z" fill="black"/>
+<path d="M18 7H19V8H18V7Z" fill="black"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M6 8V10H5V8H6ZM5 15H4V10H5V15ZM5 15V17H6V15H5ZM20 8V10H19V8H20ZM20 15V10H21V15H20ZM20 15H19V17H20V15ZM8 19H10V20H8V19ZM15 20V21H10V20H15ZM15 20H17V19H15V20Z" fill="black"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M8 5H10V6H8V5Z" fill="black"/>
+<path d="M14.5 5.5H10.5V6.5H8.5V7.5H7.5V8.5H6.5V10.5H5.5V14.5H6.5V16.5H7.5V17.5H8.5V18.5H10.5V19.5H14.5V18.5H16.5V17.5H17.5V16.5H18.5V14.5H19.5V10.5H18.5V8.5H17.5V7.5H16.5V6.5H14.5V5.5Z" fill="#FFFF00" stroke="#FFFF00" stroke-linecap="square"/>
+<path d="M8 14H9V15H8V14Z" fill="black"/>
+<path d="M9 15H10V16H9V15Z" fill="black"/>
+<path d="M10 16H15V17H10V16Z" fill="black"/>
+<path d="M15 15H16V16H15V15Z" fill="black"/>
+<path d="M16 14H17V15H16V14Z" fill="black"/>
+<path d="M9 9H11V11H9V9Z" fill="black"/>
+<path d="M14 9H16V11H14V9Z" fill="black"/>
+</svg>
