@@ -1,5 +1,67 @@
 import './style.css'
 
+/* multiplayer logic */
+const cursor = document.getElementById('cursor') as HTMLImageElement;
+const input = document.getElementById("idInput") as HTMLInputElement;
+
+const ws = new WebSocket("ws://localhost:3000/");
+var mouseEnabled = false;
+
+ws.addEventListener('open', () => {
+  console.log("Connected to game server");
+});
+
+ws.addEventListener('message', (event: MessageEvent) => {
+  const msg = JSON.parse(event.data);
+
+  switch(msg.type) {
+    case "createGame": 
+      let field: Array<any> = generateField(9, 9);
+      ws.send(JSON.stringify({type: "gameField", field}));
+      board.appendChild(generateGrid(9, 9, field));
+      input.value = msg.id;
+
+      if(!mouseEnabled) app?.addEventListener("mousemove", (event: MouseEvent) => {mouseEnabled = true; ws.send(JSON.stringify({type: "mouseMove", x: event.x, y: event.y}));});
+
+      break;
+    case "joinGame":
+      if(!msg.success) return input.value = "Error";
+      board.appendChild(generateGrid(9, 9, msg.field));
+      
+      if(!mouseEnabled) app?.addEventListener("mousemove", (event: MouseEvent) => {mouseEnabled = true; ws.send(JSON.stringify({type: "mouseMove", x: event.x, y: event.y}));});
+      break;
+    case "fieldClick":
+      let el = document.getElementById(msg.num)!!;
+
+      if (el.className == "bomb ") {
+        var loseSound = new Audio("/audio/lose.wav");
+        loseSound.play();
+        document.querySelectorAll(".bomb").forEach((el) => {
+          el.className = ["active", ...el.className.split(" ")].join(" ");
+        });
+      } else {
+        var tickSound = new Audio("/audio/tick.wav");
+        tickSound.play();
+      }
+
+      el.className = ["active", ...document.getElementById(msg.num)!!.className.split(" ")].join(" ");
+      break;
+    case "mouseMove":
+      cursor.style.left = `${msg.x}px`;
+      cursor.style.top = `${msg.y}px`;
+      cursor.style.position = `absolute`;
+      break;
+  }
+});
+
+document.getElementById("createButton")?.addEventListener("click", () => {
+  ws.send(JSON.stringify({type: "createGame"}));
+});
+
+document.getElementById("joinButton")?.addEventListener("click", () => {
+  ws.send(JSON.stringify({type: "joinGame", id: input.value}))
+});
+
 const Digit = ({}) => {
   const el = document.createElement("div");
   el.className = "digit"
@@ -27,6 +89,7 @@ const Button = ({
   const el = document.createElement("button");
   el.className = [""].join(" ");
   el.setAttribute("data-id", dataId);
+  el.id = dataId;
   el.setAttribute("data-surround", `${surrounds}`);
 
   if (bomb) {
@@ -36,6 +99,8 @@ const Button = ({
   el.addEventListener("click", () => {
     if (el.classList.contains("active")) return;
     el.className = ["active", ...el.className.split(" ")].join(" ");
+
+    ws.send(JSON.stringify({type: "fieldClick", num: el.attributes.getNamedItem("data-id")?.value}))
 
     if (bomb) {
       var loseSound = new Audio("/audio/lose.wav");
@@ -59,7 +124,7 @@ const Row = (children: HTMLElement[], id: string) => {
   return el;
 };
 
-const generateGrid = (width: number, height: number) => {
+const generateField = (width: number, height: number) => {
   const size = width * height;
   const field = Array(size).fill(-1);
   const bombs = Math.round((10 / size) * size);
@@ -113,8 +178,12 @@ const generateGrid = (width: number, height: number) => {
     field[n] = finalNumber;
   }
 
-  // Return rows!
-  const rows = Array(height)
+  return field;
+};
+
+const generateGrid = (width: number, height: number, field: Array<any>) => {
+    // Return rows!
+    const rows = Array(height)
     .fill("-1")
     .map((_v, rowIndex) => {
       return Row(
@@ -135,9 +204,8 @@ const generateGrid = (width: number, height: number) => {
   const grid = document.createElement("div");
   grid.className = "grid";
   rows.map((v) => grid.appendChild(v));
-
   return grid;
-};
+}
 
 const app = document.querySelector("#app");
 
@@ -160,7 +228,6 @@ header.appendChild(timer)
 
 const board = document.createElement('section')
 board.className = "board"
-board.appendChild(generateGrid(9, 12))
 
 if ( app ) {
   app.appendChild(header);
