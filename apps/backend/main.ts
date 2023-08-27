@@ -1,5 +1,6 @@
 import { WebSocketServer, type WebSocket, MessageEvent } from "ws";
-import { VALID_INPUTS, VALID_OUTPUTS } from 'schemas'
+import { TileState, VALID_INPUTS, VALID_OUTPUTS } from 'schemas'
+import { range } from "lodash";
 
 const wss = new WebSocketServer({
   port: parseInt(process.env.WEBSOCKET_SERVER_PORT ?? "3001"),
@@ -27,7 +28,7 @@ const games: {
     gameId: number;
     host: WebSocket;
     connections: WebSocket[];
-    field: number | null;
+    board: TileState[];
   };
 } = {};
 
@@ -46,7 +47,12 @@ wss.on('connection', (conn) => {
                 gameId: gameId,
                 host: conn,
                 connections: [conn],
-                field: null,
+                board: range(0, 64).map(() => ({
+                  clicked: false,
+                  bomb: false,
+                  flagged: false,
+                  nearby: 0,
+                })),
               };
 
               send(conn, {
@@ -73,17 +79,34 @@ wss.on('connection', (conn) => {
                 payload: {
                   success: true,
                   id: parseInt(data.payload.gameId),
-                  field: games[data.payload.gameId].field,
+                  board: games[data.payload.gameId].board,
                 },
               });
               break;
             case "tileClick":
-              broadcast(data.payload.gameId, conn, {
+              if ( data.payload.action === "flag" ) {
+                const tileData =
+                  games[data.payload.gameId].board[data.payload.tileId];
+                if (tileData.clicked) return;
+                games[data.payload.gameId].board[data.payload.tileId] = {
+                  ...tileData,
+                  flagged: !tileData.flagged,
+                };
+              } else {
+                const tileData =
+                  games[data.payload.gameId].board[data.payload.tileId];
+                if (tileData.flagged) return;
+                games[data.payload.gameId].board[data.payload.tileId] = {
+                  ...tileData,
+                  clicked: true,
+                };
+              }
+
+              broadcast(data.payload.gameId, {
                 type: "tileClick",
                 payload: {
-                  tileId: data.payload.tileId,
-                  action: data.payload.action,
-                },
+                  board: games[data.payload.gameId].board,
+                }
               });
               break;
           }
@@ -99,9 +122,8 @@ const send = (conn: WebSocket, message: VALID_OUTPUTS) => {
   conn.send(JSON.stringify(message));
 }
 
-const broadcast = (gameId: number, sender: WebSocket, message: VALID_OUTPUTS) => {
+const broadcast = (gameId: number, message: VALID_OUTPUTS) => {
   games[gameId].connections.forEach(conn => {
-    if(conn != sender)
-      conn.send(JSON.stringify(message));
+    conn.send(JSON.stringify(message));
   });
 }

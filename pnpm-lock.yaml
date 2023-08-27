@@ -10,9 +10,15 @@ importers:
 
   apps/backend:
     dependencies:
+      '@types/lodash':
+        specifier: ^4.14.197
+        version: 4.14.197
       '@types/ws':
         specifier: ^8.5.4
         version: 8.5.4
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
       schemas:
         specifier: workspace:*
         version: link:../../packages/schemas

@@ -1,5 +1,5 @@
+import { TileState } from 'schemas'
 import useWebhook from '../hooks/useWebsocket'
-import { TileState } from '../utils/tile'
 import styles from './Tile.module.css'
 import cc from 'classcat'
 

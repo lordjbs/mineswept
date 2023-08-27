@@ -29,21 +29,7 @@ ws.addEventListener("message", ({ data }) => {
         break;
       case "tileClick":
         console.info(WEBSOCKET_LOGGER_PREFIX, "tileClick", parsedData);
-        useWebhook.setState((state) => {
-          const board = [...state.board];
-          if (parsedData.payload.action === "flag") {
-            board[parsedData.payload.tileId] = {
-              ...board[parsedData.payload.tileId],
-              flagged: true,
-            };
-          } else {
-            board[parsedData.payload.tileId] = {
-              ...board[parsedData.payload.tileId],
-              clicked: true,
-            };
-          }
-          return { board };
-        });
+        useWebhook.setState(() => ({ board: parsedData.payload.board }));
         break;
       case "joinGame":
         console.info(WEBSOCKET_LOGGER_PREFIX, "joinGame", parsedData);

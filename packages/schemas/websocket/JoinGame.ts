@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { Base } from './Base'
+import { TileState } from '../game';
 
 export const JoinGame = Base.extend({
   type: z.literal('joinGame'),
@@ -14,8 +15,8 @@ export const JoinGameOutput = z.object({
   payload: z.object({
     success: z.boolean(),
     id: z.number(),
-    field: z.number().nullable().optional(),
+    board: z.array(TileState),
     message: z.string().optional(),
-  })
+  }),
 });
 export type JoinGameOutput = z.infer<typeof JoinGameOutput>

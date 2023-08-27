@@ -29,4 +29,5 @@
     background-image: 
         url('/board/flag.svg'),
         url('/board/button.svg');
+    cursor: initial;
 }
