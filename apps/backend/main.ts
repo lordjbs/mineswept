@@ -74,7 +74,11 @@ wss.on('connection', (conn) => {
               broadcastMessage(
                 gameId,
                 conn,
-                JSON.stringify({ type: "tileClick", num: data["num"] })
+                JSON.stringify({
+                  type: "tileClick",
+                  num: data["num"],
+                  action: data["action"],
+                })
               );
               break;
             

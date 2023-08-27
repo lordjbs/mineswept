@@ -1,6 +1,6 @@
 import { range } from "lodash";
 import useWebhook from "../hooks/useWebsocket";
-import { COLUMN_SIZE, ROW_SIZE } from "./tile";
+import { COLUMN_SIZE, DefaultTile, ROW_SIZE } from "./tile";
 
 const ws = new WebSocket("ws://localhost:3001");
 
@@ -23,14 +23,24 @@ ws.addEventListener("message", ({ data }) => {
       console.info(WEBSOCKET_LOGGER_PREFIX, "createGame", parsedData);
       useWebhook.setState({ 
         gameId: parsedData.id,
-        board: range(0, COLUMN_SIZE * ROW_SIZE).map(() => ({ clicked: false })),
+        board: range(0, COLUMN_SIZE * ROW_SIZE).map(() => DefaultTile),
       });
       break;
     case "tileClick":
       console.info(WEBSOCKET_LOGGER_PREFIX, "tileClick", parsedData);
       useWebhook.setState((state) => {
         const board = [...state.board];
-        board[parsedData.num] = { clicked: true };
+        if (parsedData.action === "flag") {
+          board[parsedData.num] = {
+            ...board[parsedData.num],
+            flagged: true,
+          };
+        } else {
+          board[parsedData.num] = {
+            ...board[parsedData.num],
+            clicked: true,
+          };
+        }
         return { board };
       });
       break;
@@ -43,7 +53,7 @@ ws.addEventListener("message", ({ data }) => {
         console.info(WEBSOCKET_LOGGER_PREFIX, "joinGame", parsedData)
         useWebhook.setState({ 
           gameId: parsedData.id,
-          board: range(0, COLUMN_SIZE * ROW_SIZE).map(() => ({ clicked: false })),
+          board: range(0, COLUMN_SIZE * ROW_SIZE).map(() => DefaultTile),
         });
       }
       break;

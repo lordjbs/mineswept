@@ -1,10 +1,12 @@
 import './App.css'
+import styles from './App.module.css'
 import Tile from './components/Tile'
 import Grid from './components/Grid'
 import { range } from 'lodash'
 import useWebhook from './hooks/useWebsocket'
 import { ROW_SIZE, COLUMN_SIZE } from './utils/tile'
 import JoinGame from './components/JoinGame'
+import Button from './components/Button'
 
 function App() {
   // TODO
@@ -14,12 +16,12 @@ function App() {
   return (
     <>
       {!gameId && (
-        <>
-          <button onClick={() => createGame()}>
+        <div className={styles.root}>
+          <Button onClick={() => createGame()}>
             Create Game
-          </button>
+          </Button>
           <JoinGame />
-        </>
+        </div>
       )}
       {gameId && (
         <>

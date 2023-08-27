@@ -12,10 +12,13 @@
     background-image: url('/board/button.svg');
     background-repeat: no-repeat;
     background-size: 100%;
+
+    cursor: pointer;
 }
 
 .clicked {
-    background-image: url('/board/field.svg');
+    background-image: none;
+    cursor: initial;
 }
 
 .bomb {
@@ -23,5 +26,7 @@
 }
 
 .flagged {
-    background-image: url('/board/flag.svg');
+    background-image: 
+        url('/board/flag.svg'),
+        url('/board/button.svg');
 }

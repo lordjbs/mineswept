@@ -7,27 +7,31 @@ interface WebsocketState {
   board: TileState[];
   createGame(): void;
   joinGame(id: string): void;
-  tileClick(id: number): void,
+  tileClick(id: number, action: "click" | "flag"): void;
 }
 
 const useWebhook = create<WebsocketState>()((set) => ({
-  gameId: '',
+  gameId: "",
   board: [],
   createGame: () => {
-    ws.send(JSON.stringify({ type: "createGame" }))
+    ws.send(JSON.stringify({ type: "createGame" }));
   },
   joinGame: (id: string) => {
-    ws.send(JSON.stringify({ type: "joinGame", id }))
+    ws.send(JSON.stringify({ type: "joinGame", id }));
   },
-  tileClick: (id) => {
+  tileClick: (id, action) => {
     set((state) => {
       const newBoard = [...state.board];
-      newBoard[id] = { clicked: true };
+      if (action === "flag") {
+        newBoard[id] = { ...newBoard[id], flagged: true };
+      } else {
+        newBoard[id] = { ...newBoard[id], clicked: true };
+      }
       return {
         board: newBoard,
       };
-    })
-    ws.send(JSON.stringify({ type: "tileClick", num: id }))
+    });
+    ws.send(JSON.stringify({ type: "tileClick", num: id, action: action }));
   },
   // joinGame: (gameId: string) => {
   //   // TODO - Validate gameId
