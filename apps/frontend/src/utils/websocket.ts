@@ -1,5 +1,5 @@
-import useWebhook from "../hooks/useWebsocket";
 import { VALID_OUTPUTS } from "schemas";
+import useWebhook from "../hooks/useWebsocket";
 
 const ws = new WebSocket("ws://localhost:3001");
 
@@ -14,7 +14,7 @@ ws.onclose = () => {
 };
 
 ws.addEventListener("message", ({ data }) => {
-  try { 
+  try {
     const parsedData = VALID_OUTPUTS.parse(JSON.parse(data));
 
     switch (parsedData.type) {
@@ -50,9 +50,9 @@ ws.addEventListener("message", ({ data }) => {
         console.error(WEBSOCKET_LOGGER_PREFIX, "error", parsedData);
         break;
     }
-  } catch(e) {
+  } catch (e) {
     console.error(WEBSOCKET_LOGGER_PREFIX, "error", e);
   }
 });
 
-export { ws }
+export { ws };

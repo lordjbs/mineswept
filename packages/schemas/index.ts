@@ -1,2 +1,2 @@
-export * from './websocket'
-export * from './game'
+export * from "./game";
+export * from "./websocket";

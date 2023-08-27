@@ -1,5 +1,5 @@
-import styles from './Button.module.css'
-import cc from 'classcat'
+import cc from 'classcat';
+import styles from './Button.module.css';
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>
 

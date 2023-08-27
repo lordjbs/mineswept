@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { Base } from "./Base";
 import { TileState } from "..";
+import { Base } from "./Base";
 
-export const TileClickAction = z.enum(['click', 'flag']);
+export const TileClickAction = z.enum(["click", "flag"]);
 export type TileClickAction = z.infer<typeof TileClickAction>;
 
 export const TileClick = Base.extend({

@@ -1,7 +1,7 @@
+import cc from 'classcat'
 import { TileState } from 'schemas'
 import useWebhook from '../hooks/useWebsocket'
 import styles from './Tile.module.css'
-import cc from 'classcat'
 
 interface TileProps extends TileState {
     index: number,

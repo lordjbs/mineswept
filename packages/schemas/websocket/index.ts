@@ -1,17 +1,16 @@
-import { z } from 'zod';
+import { z } from "zod";
+import { Connected, Ping } from "./BasicWebsocket";
 import { CreateGame, CreateGameOutput } from "./CreateGame";
-import { JoinGame, JoinGameOutput } from './JoinGame';
-import { TileClick, TileClickOutput } from './TileClick';
-import { Error } from './Error';
-import { MouseMove } from './MouseMove';
-import { Connected, Ping } from './BasicWebsocket';
+import { Error } from "./Error";
+import { JoinGame, JoinGameOutput } from "./JoinGame";
+import { MouseMove } from "./MouseMove";
+import { TileClick, TileClickOutput } from "./TileClick";
 
 export const VALID_INPUTS = z.discriminatedUnion("type", [
   CreateGame,
   JoinGame,
   TileClick,
   MouseMove,
-  
 ]);
 export type VALID_INPUTS = z.infer<typeof VALID_INPUTS>;
 

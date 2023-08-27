@@ -1,8 +1,8 @@
 import { useState } from "react"
 import useWebhook from "../hooks/useWebsocket"
 import Button from "./Button"
-import styles from './JoinGame.module.css'
 import Input from "./Input"
+import styles from './JoinGame.module.css'
 
 const JoinGame = () => {
     const [pinCode, setPinCode] = useState("")

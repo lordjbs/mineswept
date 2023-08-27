@@ -1,0 +1,13 @@
+{
+  "editor.formatOnSave": true,
+  "editor.insertSpaces": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true,
+    "source.organizeImports": true
+  },
+  "files.eol": "\n",
+  "[javascriptreact][javascript][typescriptreact][typescript]": {
+    "editor.tabSize": 2
+  }
+}

@@ -1,6 +1,6 @@
-import { create } from 'zustand'
-import { ws } from '../utils/websocket';
-import { CreateGame, TileClickAction, TileState, VALID_INPUTS } from 'schemas';
+import { CreateGame, TileClickAction, TileState, VALID_INPUTS } from "schemas";
+import { create } from "zustand";
+import { ws } from "../utils/websocket";
 
 interface WebsocketState {
   gameId: null | number;
@@ -12,7 +12,7 @@ interface WebsocketState {
 
 const send = (ws: WebSocket, payload: VALID_INPUTS) => {
   return ws.send(JSON.stringify(payload));
-}
+};
 
 const useWebhook = create<WebsocketState>()(() => ({
   gameId: null,
@@ -31,12 +31,15 @@ const useWebhook = create<WebsocketState>()(() => ({
     });
   },
   tileClick: (tileId, gameId, action) => {
-    send(ws, { type: "tileClick", payload: {
-      tileId,
-      gameId,
-      action
-    } });
+    send(ws, {
+      type: "tileClick",
+      payload: {
+        tileId,
+        gameId,
+        action,
+      },
+    });
   },
 }));
 
-export default useWebhook
+export default useWebhook;

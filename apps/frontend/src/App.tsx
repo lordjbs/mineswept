@@ -1,12 +1,12 @@
+import { range } from 'lodash'
 import './App.css'
 import styles from './App.module.css'
-import Tile from './components/Tile'
-import Grid from './components/Grid'
-import { range } from 'lodash'
-import useWebhook from './hooks/useWebsocket'
-import { ROW_SIZE, COLUMN_SIZE } from './utils/tile'
-import JoinGame from './components/JoinGame'
 import Button from './components/Button'
+import Grid from './components/Grid'
+import JoinGame from './components/JoinGame'
+import Tile from './components/Tile'
+import useWebhook from './hooks/useWebsocket'
+import { COLUMN_SIZE, ROW_SIZE } from './utils/tile'
 
 function App() {
   // TODO

@@ -1,5 +1,5 @@
-import styles from './Input.module.css'
-import cc from 'classcat'
+import cc from 'classcat';
+import styles from './Input.module.css';
 
 type InputProps = React.InputHTMLAttributes<HTMLInputElement>
 

@@ -1,8 +1,8 @@
-import { WebSocketServer, type WebSocket  } from 'ws';
-import { Game } from './Game'
-import { Player } from './Player';
+import { WebSocketServer, type WebSocket } from "ws";
+import { Game } from "./Game";
+import { Player } from "./Player";
 
-import { VALID_OUTPUTS } from 'schemas'
+import { VALID_OUTPUTS } from "schemas";
 
 class MinesweptServer {
   ws: WebSocketServer;
@@ -77,4 +77,4 @@ class MinesweptServer {
   };
 }
 
-export {MinesweptServer}
+export { MinesweptServer };

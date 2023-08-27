@@ -1,10 +1,10 @@
-import {v4 as uuidv4} from 'uuid';
-import { WebSocket } from 'ws';
+import { v4 as uuidv4 } from "uuid";
+import { WebSocket } from "ws";
 
 interface IPlayer {
-    conn: WebSocket,
-    uuid: string,
-    gameId: number
+  conn: WebSocket;
+  uuid: string;
+  gameId: number;
 }
 
 class Player implements IPlayer {
@@ -19,4 +19,4 @@ class Player implements IPlayer {
   }
 }
 
-export { Player }
+export { Player };

@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from "zod";
 
 export const Error = z.object({
   type: z.literal("error"),
@@ -6,4 +6,4 @@ export const Error = z.object({
     message: z.string(),
   }),
 });
-export type Error = z.infer<typeof Error>
+export type Error = z.infer<typeof Error>;
