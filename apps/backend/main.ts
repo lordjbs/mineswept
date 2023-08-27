@@ -1,7 +1,7 @@
 import { WebSocketServer } from 'ws';
 
 const wss = new WebSocketServer({
-  port: 3000,
+  port: 4000,
   perMessageDeflate: {
     zlibDeflateOptions: {
       chunkSize: 1024,
@@ -22,12 +22,17 @@ const wss = new WebSocketServer({
 });
 
 const connections: any[] = [];
-const games = {};
+const games: { [key: string]: {
+  gameId: number
+  host: any
+  connections: any[]
+  field: any
+} } = {};
 
 wss.on('connection', (conn) => {
     connections.push(conn);
 
-    var gameId;
+    var gameId: number;
     conn.on("message", (message: MessageEvent) => {
         let data: { [x: string]: any; type: any; };
 
@@ -71,7 +76,7 @@ wss.on('connection', (conn) => {
     });
 });
 
-const broadcastMessage = (gameId, sender, message: string) => {
+const broadcastMessage = (gameId: number, sender: any, message: string) => {
     games[gameId].connections.forEach(conn => {
         if(conn != sender)
             conn.send(message);

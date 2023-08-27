@@ -22,9 +22,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
-# Turborepo
-.turbo
-
-# Temporary
-apps/backend/*.js
