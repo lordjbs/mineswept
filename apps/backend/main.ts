@@ -31,15 +31,12 @@ ms.ws.on("connection", (conn: WebSocket) => {
 const handleEvent = (conn: WebSocket, uuid: string, data: VALID_INPUTS) => {
   //TODO: Add checks for json fields. For testing/beta we just expect the client to send the proper fields.
   switch (data["type"]) {
-    case "createGame":
-      var newGameId = ms.createGame(uuid, "default");
-
+    case "createGame": {
+      const newGameId = ms.createGame(uuid, "default");
       ms.connections[uuid].gameId = newGameId;
       ms.games[newGameId].players.push(uuid);
-
-      var board = generateBoard(8, 8);
+      const board = generateBoard(8, 8);
       ms.games[newGameId].board = board;
-
       ms.send(conn, {
         type: "createGame",
         payload: {
@@ -49,7 +46,7 @@ const handleEvent = (conn: WebSocket, uuid: string, data: VALID_INPUTS) => {
         },
       });
       break;
-
+    }
     //TODO: Finish
     /*case "startGame": 
             // First start is only host
@@ -79,7 +76,7 @@ const handleEvent = (conn: WebSocket, uuid: string, data: VALID_INPUTS) => {
 
             break;
         */
-    case "joinGame":
+    case "joinGame": {
       const gameId = parseInt(data.payload.gameId);
       //TODO: Add regex check for proper game id
       if (ms.getGame(gameId) == null) {
@@ -102,6 +99,7 @@ const handleEvent = (conn: WebSocket, uuid: string, data: VALID_INPUTS) => {
         },
       });
       break;
+    }
 
     //TODO: Make
     /*
@@ -114,10 +112,10 @@ const handleEvent = (conn: WebSocket, uuid: string, data: VALID_INPUTS) => {
 
             break;
         */
-    case "tileClick":
+    case "tileClick": {
       const player = ms.getPlayer(uuid);
       if (player == undefined) return;
-      var newGameId = player.gameId;
+      const newGameId = player.gameId;
       const tileData = ms.games[newGameId].board[data.payload.tileId];
       if (data.payload.action === "flag") {
         if (tileData.clicked) return;
@@ -143,8 +141,9 @@ const handleEvent = (conn: WebSocket, uuid: string, data: VALID_INPUTS) => {
 
       // ms.games[newGameId].progress.push(data["field"]);
       break;
+    }
 
-    case "mouseMove":
+    case "mouseMove": {
       const _player = ms.getPlayer(uuid);
       if (_player === undefined) return;
       ms.broadcastMessage(_player.gameId, uuid, {
@@ -153,5 +152,6 @@ const handleEvent = (conn: WebSocket, uuid: string, data: VALID_INPUTS) => {
       });
 
       break;
+    }
   }
 };
