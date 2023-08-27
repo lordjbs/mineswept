@@ -8,7 +8,10 @@ interface TileProps extends TileState {
 }
 
 const Tile = ({ index, bomb, flagged, clicked }: TileProps) => {
-    const { tileClick } = useWebhook()
+    const { gameId, tileClick } = useWebhook()
+
+    if ( !gameId )
+        return null
 
     return (
         <button 
@@ -19,16 +22,11 @@ const Tile = ({ index, bomb, flagged, clicked }: TileProps) => {
                 [styles.flagged]: flagged,
                 [styles.clicked]: clicked
             })} 
-            onClick={() => tileClick(index, 'click')} 
+            onClick={() => tileClick(index, gameId, 'click')} 
             onContextMenu={(event) => {
                 event.preventDefault()
-                tileClick(index, 'flag')
+                tileClick(index, gameId, 'flag')
             }}
-            // onContextMenu={() => setter({
-            //     bomb,
-            //     clicked,
-            //     flagged: true,
-            // })}
         >
             &nbsp;
         </button>

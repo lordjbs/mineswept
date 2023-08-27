@@ -1,46 +1,56 @@
 import { create } from 'zustand'
 import { ws } from '../utils/websocket';
 import { TileState } from '../utils/tile';
+import { CreateGame, JoinGame, TileClickAction, VALID_INPUTS } from 'schemas';
 
 interface WebsocketState {
-  gameId: string;
+  gameId: null | number;
   board: TileState[];
-  createGame(): void;
+  createGame(payload: CreateGame): void;
   joinGame(id: string): void;
-  tileClick(id: number, action: "click" | "flag"): void;
+  tileClick(tileId: number, gameId: number, action: TileClickAction): void;
+}
+
+const send = (ws: WebSocket, payload: VALID_INPUTS) => {
+  return ws.send(JSON.stringify(payload));
 }
 
 const useWebhook = create<WebsocketState>()((set) => ({
-  gameId: "",
+  gameId: null,
   board: [],
   createGame: () => {
-    ws.send(JSON.stringify({ type: "createGame" }));
+    const payload: CreateGame = {
+      type: "createGame"
+    }
+    send(ws, payload);
   },
   joinGame: (id: string) => {
-    ws.send(JSON.stringify({ type: "joinGame", id }));
+    const payload: JoinGame = {
+      type: "joinGame",
+      payload: {
+        gameId: id
+      }
+    }
+    send(ws, payload)
   },
-  tileClick: (id, action) => {
+  tileClick: (tileId, gameId, action) => {
     set((state) => {
       const newBoard = [...state.board];
       if (action === "flag") {
-        newBoard[id] = { ...newBoard[id], flagged: true };
+        newBoard[tileId] = { ...newBoard[tileId], flagged: true };
       } else {
-        newBoard[id] = { ...newBoard[id], clicked: true };
+        newBoard[tileId] = { ...newBoard[tileId], clicked: true };
       }
       return {
         board: newBoard,
       };
     });
-    ws.send(JSON.stringify({ type: "tileClick", num: id, action: action }));
+    send(ws, { type: "tileClick", payload: {
+      tileId,
+      gameId,
+      action
+    } });
   },
-  // joinGame: (gameId: string) => {
-  //   // TODO - Validate gameId
-  //   set({ gameId });
-  // },
-  // leaveGame: () => {
-  //   // TODO - Tell server we left.
-  //   set({ gameId: "" });
-  // }
 }));
 
 export default useWebhook

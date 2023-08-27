@@ -1,4 +1,5 @@
-import { WebSocketServer, type WebSocket } from "ws";
+import { WebSocketServer, type WebSocket, MessageEvent } from "ws";
+import { VALID_INPUTS, VALID_OUTPUTS } from 'schemas'
 
 const wss = new WebSocketServer({
   port: parseInt(process.env.WEBSOCKET_SERVER_PORT ?? "3001"),
@@ -33,65 +34,74 @@ const games: {
 wss.on('connection', (conn) => {
     connections.push(conn);
 
-    let gameId: number;
-    
     conn.on("message", (message: MessageEvent) => {
         // TODO - We should really enforce these types. Lol.
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        let data: { [x: string]: any; type: any; };
-
         try {
-          data = JSON.parse(message.toString());
-        } catch (e) {
-          conn.close();
-          return;
-        }
-
-        switch(data["type"]) {
+          const data = VALID_INPUTS.parse(JSON.parse(message.toString()));
+          switch (data.type) {
             case "createGame":
-              gameId = Math.floor(Math.random() * 90000) + 10000;
-              games[gameId] = {gameId: gameId, host: conn, connections: [conn], field: null};
+              const gameId = Math.floor(Math.random() * 90000) + 10000;
+              games[gameId] = {
+                gameId: gameId,
+                host: conn,
+                connections: [conn],
+                field: null,
+              };
 
-              conn.send(JSON.stringify({type: "createGame", success: true, id: gameId}));
-              break;
-            
-            case "gameField":
-              if(games[gameId].host != conn) return conn.send(JSON.stringify({type: "gameField", success: false, message: "Not host"}));
-              games[gameId].field = data["field"];
-
-              conn.send(JSON.stringify({type: "gameField", success: true}));
+              send(conn, {
+                type: "createGame",
+                payload: {
+                  success: true,
+                  id: gameId,
+                },
+              });
               break;
             case "joinGame":
-              gameId = data["id"];
               // TODO - Should really check if the game exists.
               // eslint-disable-next-line no-prototype-builtins
-              if(!games.hasOwnProperty(gameId)) return conn.send(JSON.stringify({type: "joinGame", success: false, message: "Invalid id"}));
-              games[gameId].connections.push(conn);
-              conn.send(JSON.stringify({type: "joinGame", success: true, id: gameId, field: games[gameId].field}))
+              if (!games.hasOwnProperty(data.payload.gameId))
+                return send(conn, {
+                  type: "error",
+                  payload: {
+                    message: "Invalid game id",
+                  },
+                });
+              games[data.payload.gameId].connections.push(conn);
+              send(conn, {
+                type: "joinGame",
+                payload: {
+                  success: true,
+                  id: parseInt(data.payload.gameId),
+                  field: games[data.payload.gameId].field,
+                },
+              });
               break;
-            
             case "tileClick":
-              broadcastMessage(
-                gameId,
-                conn,
-                JSON.stringify({
-                  type: "tileClick",
-                  num: data["num"],
-                  action: data["action"],
-                })
-              );
+              broadcast(data.payload.gameId, conn, {
+                type: "tileClick",
+                payload: {
+                  tileId: data.payload.tileId,
+                  action: data.payload.action,
+                },
+              });
               break;
-            
-            case "mouseMove":
-              broadcastMessage(gameId, conn, JSON.stringify({"type": "mouseMove", "x": data["x"], y: data["y"]}));
-              break;
+          }
+        } catch (e) {
+          console.log(e)
+          conn.close();
+          return;
         }
     });
 });
 
-const broadcastMessage = (gameId: number, sender: WebSocket, message: string) => {
+const send = (conn: WebSocket, message: VALID_OUTPUTS) => {
+  conn.send(JSON.stringify(message));
+}
+
+const broadcast = (gameId: number, sender: WebSocket, message: VALID_OUTPUTS) => {
   games[gameId].connections.forEach(conn => {
     if(conn != sender)
-      conn.send(message);
+      conn.send(JSON.stringify(message));
   });
 }

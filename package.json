@@ -1,4 +1,11 @@
 {
     "name": "mineswept",
-    "private": true
+    "private": true,
+    "workspaces": [
+        "apps/*",
+        "packages/*"
+    ],
+    "engines": {
+        "node": ">=14.0.0"
+    }
 }

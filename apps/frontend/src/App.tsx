@@ -17,7 +17,7 @@ function App() {
     <>
       {!gameId && (
         <div className={styles.root}>
-          <Button onClick={() => createGame()}>
+          <Button onClick={() => createGame({ type: "createGame" })}>
             Create Game
           </Button>
           <JoinGame />
