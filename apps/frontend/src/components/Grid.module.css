@@ -8,6 +8,6 @@
     display: flex;
     flex-direction: column;
     gap: var(--grid-gap);
-    background-image: url('/board/field.svg');
+    /* background-image: url('/board/field.svg'); */
     background-size: var(--button-size) var(--button-size);
 }

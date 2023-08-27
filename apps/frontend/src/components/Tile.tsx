@@ -3,24 +3,25 @@ import styles from './Tile.module.css'
 import cc from 'classcat'
 
 interface TileProps {
-    bomb: boolean,
-    flagged: boolean,
+    index: number,
     clicked: boolean,
+    // bomb: boolean,
+    // flagged: boolean,
 }
 
-const Tile = ({ bomb, flagged, clicked }: TileProps) => {
-    const { send } = useWebhook()
+const Tile = ({ index, clicked }: TileProps) => {
+    const { tileClick } = useWebhook()
 
     return (
         <button 
             type="button" 
             className={cc({
                 [styles.root]: true,
-                [styles.bomb]: bomb,
-                [styles.flagged]: flagged && bomb !== true,
-                [styles.clicked]: clicked && bomb !== true,
+                // [styles.bomb]: bomb,
+                // [styles.flagged]: flagged && bomb !== true,
+                [styles.clicked]: clicked
             })} 
-            onClick={() => send()} 
+            onClick={() => tileClick(index)} 
             // onContextMenu={() => setter({
             //     bomb,
             //     clicked,

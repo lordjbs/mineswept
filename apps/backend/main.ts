@@ -34,6 +34,7 @@ wss.on('connection', (conn) => {
     connections.push(conn);
 
     let gameId: number;
+    
     conn.on("message", (message: MessageEvent) => {
         // TODO - We should really enforce these types. Lol.
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -66,11 +67,15 @@ wss.on('connection', (conn) => {
               // eslint-disable-next-line no-prototype-builtins
               if(!games.hasOwnProperty(gameId)) return conn.send(JSON.stringify({type: "joinGame", success: false, message: "Invalid id"}));
               games[gameId].connections.push(conn);
-              conn.send(JSON.stringify({type: "joinGame", success: true, field: games[gameId].field}))
+              conn.send(JSON.stringify({type: "joinGame", success: true, id: gameId, field: games[gameId].field}))
               break;
             
-            case "fieldClick":
-              broadcastMessage(gameId, conn, JSON.stringify({type: "fieldClick", num: data["num"]}));
+            case "tileClick":
+              broadcastMessage(
+                gameId,
+                conn,
+                JSON.stringify({ type: "tileClick", num: data["num"] })
+              );
               break;
             
             case "mouseMove":
@@ -81,8 +86,8 @@ wss.on('connection', (conn) => {
 });
 
 const broadcastMessage = (gameId: number, sender: WebSocket, message: string) => {
-    games[gameId].connections.forEach(conn => {
-        if(conn != sender)
-            conn.send(message);
-    });
+  games[gameId].connections.forEach(conn => {
+    if(conn != sender)
+      conn.send(message);
+  });
 }

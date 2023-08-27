@@ -1,33 +1,42 @@
 import { create } from 'zustand'
-
-const ws = new WebSocket("ws://localhost:3001");
-
-ws.onopen = () => {
-  console.log('web socket :)!')
-}
-
-ws.onclose = () => {
-  console.log('web socket :(!')
-}
+import { ws } from '../utils/websocket';
+import { TileState } from '../utils/tile';
 
 interface WebsocketState {
-  gameId: string,
-  send(): void,
+  gameId: string;
+  board: TileState[];
+  createGame(): void;
+  joinGame(id: string): void;
+  tileClick(id: number): void,
 }
 
 const useWebhook = create<WebsocketState>()((set) => ({
   gameId: '',
-  joinGame: (gameId: string) => {
-    // TODO - Validate gameId
-    set({ gameId });
+  board: [],
+  createGame: () => {
+    ws.send(JSON.stringify({ type: "createGame" }))
   },
-  leaveGame: () => {
-    // TODO - Tell server we left.
-    set({ gameId: "" });
+  joinGame: (id: string) => {
+    ws.send(JSON.stringify({ type: "joinGame", id }))
   },
-  send: () => {
-    ws.send(JSON.stringify({ gameId: "1234", message: "Hello" }))
-  }
+  tileClick: (id) => {
+    set((state) => {
+      const newBoard = [...state.board];
+      newBoard[id] = { clicked: true };
+      return {
+        board: newBoard,
+      };
+    })
+    ws.send(JSON.stringify({ type: "tileClick", num: id }))
+  },
+  // joinGame: (gameId: string) => {
+  //   // TODO - Validate gameId
+  //   set({ gameId });
+  // },
+  // leaveGame: () => {
+  //   // TODO - Tell server we left.
+  //   set({ gameId: "" });
+  // }
 }));
 
 export default useWebhook
