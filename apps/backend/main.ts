@@ -1,39 +1,42 @@
-import { WebSocketServer } from 'ws';
+import { WebSocketServer, type WebSocket } from "ws";
 
 const wss = new WebSocketServer({
-  port: 4000,
+  port: parseInt(process.env.WEBSOCKET_SERVER_PORT ?? "3001"),
   perMessageDeflate: {
     zlibDeflateOptions: {
       chunkSize: 1024,
       memLevel: 7,
-      level: 3
+      level: 3,
     },
     zlibInflateOptions: {
-      chunkSize: 10 * 1024
+      chunkSize: 10 * 1024,
     },
     clientNoContextTakeover: true,
     serverNoContextTakeover: true,
     serverMaxWindowBits: 10,
     concurrencyLimit: 10,
-    threshold: 1024
+    threshold: 1024,
   },
   maxPayload: 2097152,
-
 });
 
-const connections: any[] = [];
-const games: { [key: string]: {
-  gameId: number
-  host: any
-  connections: any[]
-  field: any
-} } = {};
+const connections: WebSocket[] = [];
+const games: {
+  [key: string]: {
+    gameId: number;
+    host: WebSocket;
+    connections: WebSocket[];
+    field: number | null;
+  };
+} = {};
 
 wss.on('connection', (conn) => {
     connections.push(conn);
 
-    var gameId: number;
+    let gameId: number;
     conn.on("message", (message: MessageEvent) => {
+        // TODO - We should really enforce these types. Lol.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let data: { [x: string]: any; type: any; };
 
         try {
@@ -59,8 +62,9 @@ wss.on('connection', (conn) => {
               break;
             case "joinGame":
               gameId = data["id"];
+              // TODO - Should really check if the game exists.
+              // eslint-disable-next-line no-prototype-builtins
               if(!games.hasOwnProperty(gameId)) return conn.send(JSON.stringify({type: "joinGame", success: false, message: "Invalid id"}));
-              
               games[gameId].connections.push(conn);
               conn.send(JSON.stringify({type: "joinGame", success: true, field: games[gameId].field}))
               break;
@@ -76,7 +80,7 @@ wss.on('connection', (conn) => {
     });
 });
 
-const broadcastMessage = (gameId: number, sender: any, message: string) => {
+const broadcastMessage = (gameId: number, sender: WebSocket, message: string) => {
     games[gameId].connections.forEach(conn => {
         if(conn != sender)
             conn.send(message);

@@ -14,7 +14,7 @@ function App() {
         {range(0,ROW_SIZE).map(() => {
           return <div>
             {range(0,COLUMN_SIZE).map(() => {
-              return <Tile bomb={false} flagged={false} clicked={false} setter={() => {}} />
+              return <Tile bomb={false} flagged={false} clicked={false} />
             })}
           </div>
         })}
