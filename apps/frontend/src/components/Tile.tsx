@@ -7,7 +7,7 @@ interface TileProps extends TileState {
     index: number,
 }
 
-const Tile = ({ index, bomb, flagged, clicked }: TileProps) => {
+const Tile = ({ index, bomb, flagged, clicked, nearby }: TileProps) => {
     const { gameId, tileClick } = useWebhook()
 
     if ( !gameId )
@@ -18,7 +18,7 @@ const Tile = ({ index, bomb, flagged, clicked }: TileProps) => {
             type="button" 
             className={cc({
                 [styles.root]: true,
-                [styles.bomb]: bomb,
+                [styles.bomb]: bomb && clicked,
                 [styles.flagged]: flagged,
                 [styles.clicked]: clicked
             })} 
@@ -27,6 +27,7 @@ const Tile = ({ index, bomb, flagged, clicked }: TileProps) => {
                 event.preventDefault()
                 tileClick(index, gameId, 'flag')
             }}
+            data-nearby={nearby}
         >
             &nbsp;
         </button>

@@ -16,6 +16,15 @@
     cursor: pointer;
 }
 
+.clicked[data-nearby="1"] { background-image: url('/board/number-1.svg'); }
+.clicked[data-nearby="2"] { background-image: url('/board/number-2.svg'); }
+.clicked[data-nearby="3"] { background-image: url('/board/number-3.svg'); }
+.clicked[data-nearby="4"] { background-image: url('/board/number-4.svg'); }
+.clicked[data-nearby="5"] { background-image: url('/board/number-5.svg'); }
+.clicked[data-nearby="6"] { background-image: url('/board/number-6.svg'); }
+.clicked[data-nearby="7"] { background-image: url('/board/number-7.svg'); }
+.clicked[data-nearby="8"] { background-image: url('/board/number-8.svg'); }
+
 .clicked {
     background-image: none;
     cursor: initial;

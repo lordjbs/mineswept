@@ -1,6 +1,4 @@
-import { range } from "lodash";
 import useWebhook from "../hooks/useWebsocket";
-import { DefaultTile, COLUMN_SIZE, ROW_SIZE } from "./tile";
 import { VALID_OUTPUTS } from "schemas";
 
 const ws = new WebSocket("ws://localhost:3001");
@@ -24,7 +22,7 @@ ws.addEventListener("message", ({ data }) => {
         console.info(WEBSOCKET_LOGGER_PREFIX, "createGame", parsedData);
         useWebhook.setState({
           gameId: parsedData.payload.id,
-          board: range(0, COLUMN_SIZE * ROW_SIZE).map(() => DefaultTile),
+          board: parsedData.payload.board,
         });
         break;
       case "tileClick":
@@ -44,7 +42,7 @@ ws.addEventListener("message", ({ data }) => {
           console.info(WEBSOCKET_LOGGER_PREFIX, "joinGame", parsedData);
           useWebhook.setState({
             gameId: parsedData.payload.id,
-            board: range(0, COLUMN_SIZE * ROW_SIZE).map(() => DefaultTile),
+            board: parsedData.payload.board,
           });
         }
         break;
