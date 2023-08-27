@@ -1,0 +1,26 @@
+:root {
+  --button-size: 2rem;
+
+  --grid-gap: 0;
+  --grid-border: calc(var(--button-size) * 0.2);
+
+  --digit-border: calc(var(--button-size) * 0.05);
+
+  background-color: #bdbdbd;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "MS Sans Serif", Tahoma, Verdana, Segoe, sans-serif;
+}
+
+body {
+  display: flex;
+}

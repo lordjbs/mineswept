@@ -1,0 +1,23 @@
+.root {
+  /* reset */
+  appearance: none;
+  border: none;
+  font: inherit;
+  color: inherit;
+  width: 100%;
+  /* style */
+  border-width: 2px;
+  border-style: outset;
+  border-color: buttonface;
+  border-right-color: buttonface;
+  border-bottom-color: buttonface;
+  border-right-color: #424242;
+  border-bottom-color: #424242;
+  background: silver;
+  color: black;
+  padding: 0.75rem 0.25rem;
+  padding-right: 0px;
+  padding-left: 0px;
+  border-radius: 1px;
+  cursor: pointer;
+}

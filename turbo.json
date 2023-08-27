@@ -1,0 +1,16 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "pipeline": {
+    "build": {
+      "outputs": ["dist/**"],
+      "dotEnv": [".env.production.local", ".env.production", ".env.local", ".env"]
+    },
+    "dev": {
+      "dotEnv": [".env.development.local", ".env.development", ".env.local", ".env"]
+    },
+    "lint": {
+      
+    }
+  },
+  "globalDotEnv": [".env"]
+}
