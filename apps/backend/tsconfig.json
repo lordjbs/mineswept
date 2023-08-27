@@ -12,7 +12,6 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx",
 
     /* Linting */
     "strict": true,
@@ -23,7 +22,7 @@
   "ts-node": {
     "esm": true,
     "compilerOptions": {
-      "module": "nodenext",
+      "module": "nodenext"
     }
   }
 }

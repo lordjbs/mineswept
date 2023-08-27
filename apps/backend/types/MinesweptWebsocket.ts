@@ -47,6 +47,7 @@ class MinesweptServer {
   }
 
   getGame(gameId: number): Game | undefined {
+    // eslint-disable-next-line no-prototype-builtins
     if (!this.games.hasOwnProperty(gameId)) return;
     return this.games[gameId];
   }
@@ -57,6 +58,7 @@ class MinesweptServer {
    * @returns Player class object, if not found it will return null
    */
   getPlayer(uuid: string): Player | undefined {
+    // eslint-disable-next-line no-prototype-builtins
     if (!this.connections.hasOwnProperty(uuid)) return;
     return this.connections[uuid];
   }

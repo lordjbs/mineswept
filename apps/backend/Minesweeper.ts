@@ -13,9 +13,9 @@ const generateBoard = (COLUMN_SIZE: number, ROW_SIZE: number) => {
   const bombs = Math.round((10 / size) * size);
 
   const validBombLocations = [...Array(size).keys()];
-  for (var i = 0; i < bombs; i++) {
+  for (let i = 0; i < bombs; i++) {
     // Get a random location.
-    var pos = Math.round(Math.random() * (validBombLocations.length - 0) + 0);
+    const pos = Math.round(Math.random() * (validBombLocations.length - 0) + 0);
     // Make it a bomb.
     board[pos] = {
       ...board[pos],
@@ -25,10 +25,10 @@ const generateBoard = (COLUMN_SIZE: number, ROW_SIZE: number) => {
     validBombLocations.splice(pos, 1);
   }
 
-  for (var n = 0; n < size; n++) {
-    let fVal = board[n];
+  for (let n = 0; n < size; n++) {
+    const fVal = board[n];
     if (fVal.bomb === true) continue; // Ignore if bomb
-    var finalNumber = 0;
+    let finalNumber = 0;
 
     const numbers = [
       -1,
@@ -42,8 +42,8 @@ const generateBoard = (COLUMN_SIZE: number, ROW_SIZE: number) => {
     ];
 
     for (const x in numbers) {
-      let num = numbers[x];
-      let i = n + num;
+      const num = numbers[x];
+      const i = n + num;
 
       if (i < 0 || i > size) continue; // Exit if irrelevant
       if (
