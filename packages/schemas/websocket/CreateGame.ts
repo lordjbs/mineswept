@@ -10,7 +10,7 @@ export const CreateGameOutput = z.object({
     type: z.literal('createGame'),
     payload: z.object({
         success: z.boolean(),
-        id: z.number(),
+        gameId: z.number(),
         board: z.array(TileState)
     })
 });

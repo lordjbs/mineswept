@@ -1,196 +1,161 @@
-import { WebSocketServer, type WebSocket, MessageEvent } from "ws";
-import { TileState, VALID_INPUTS, VALID_OUTPUTS } from 'schemas'
-import { range } from "lodash";
+import { MinesweptServer } from './types/MinesweptWebsocket';
+import { Player } from './types/Player';
+import { generateBoard } from './Minesweeper';
 
-const wss = new WebSocketServer({
-  port: parseInt(process.env.WEBSOCKET_SERVER_PORT ?? "3001"),
-  perMessageDeflate: {
-    zlibDeflateOptions: {
-      chunkSize: 1024,
-      memLevel: 7,
-      level: 3,
-    },
-    zlibInflateOptions: {
-      chunkSize: 10 * 1024,
-    },
-    clientNoContextTakeover: true,
-    serverNoContextTakeover: true,
-    serverMaxWindowBits: 10,
-    concurrencyLimit: 10,
-    threshold: 1024,
-  },
-  maxPayload: 2097152,
-});
+import { type WebSocket, MessageEvent  } from 'ws';
+import { VALID_INPUTS } from 'schemas'
 
-const connections: WebSocket[] = [];
-const games: {
-  [key: string]: {
-    gameId: number;
-    host: WebSocket;
-    connections: WebSocket[];
-    board: TileState[];
-  };
-} = {};
 
-export const COLUMN_SIZE = 8;
-export const ROW_SIZE = 8;
+const ms = new MinesweptServer(3001);
 
-wss.on('connection', (conn) => {
-    connections.push(conn);
+ms.ws.on('connection', (conn: any) => {
+
+    const player = new Player(conn);
+    ms.connections[player.uuid] = player;
+
+    //conn.send(JSON.stringify({connected: true, uuid: player.uuid}));
 
     conn.on("message", (message: MessageEvent) => {
-        // TODO - We should really enforce these types. Lol.
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // Parse message
+        let data;
+
         try {
-          const data = VALID_INPUTS.parse(JSON.parse(message.toString()));
-          switch (data.type) {
-            case "createGame":
-              const gameId = Math.floor(Math.random() * 90000) + 10000;
-
-              const board = range(0, 64).map(() => ({
-                clicked: false,
-                bomb: false,
-                flagged: false,
-                nearby: 0,
-              }));
-
-              const width = COLUMN_SIZE;
-              const size = COLUMN_SIZE * ROW_SIZE;
-              const bombs = Math.round((10 / size) * size);
-
-              const validBombLocations = [...Array(size).keys()];
-              for (var i = 0; i < bombs; i++) {
-                // Get a random location.
-                var pos = Math.round(
-                  Math.random() * (validBombLocations.length - 0) + 0
-                );
-                // Make it a bomb.
-                board[pos] = {
-                  ...board[pos],
-                  bomb: true,
-                };
-                // Remove it from valid locations so we don't duplicate.
-                validBombLocations.splice(pos, 1);
-              }
-
-              for (var n = 0; n < size; n++) {
-                let fVal = board[n];
-                if (fVal.bomb === true) continue; // Ignore if bomb
-                var finalNumber = 0;
-
-                const numbers = [
-                  -1,
-                  1,
-                  -(width - 1),
-                  -width,
-                  -(width + 1),
-                  width - 1,
-                  width,
-                  width + 1,
-                ];
-
-                for (const x in numbers) {
-                  let num = numbers[x];
-                  let i = n + num;
-
-                  if (i < 0 || i > size) continue; // Exit if irrelevant
-                  if (
-                    (n + 1) % width == 0 &&
-                    (num == 1 || num == width + 1 || num == -(width - 1))
-                  )
-                    continue;
-                  if (
-                    n % width == 0 &&
-                    (num == -1 || num == -(width + 1) || num == width - 1)
-                  )
-                    continue;
-                  if (board[i] === undefined) continue;
-                  if (board[i].bomb === true) finalNumber++;
-                }
-
-                board[n] = {
-                  ...board[n],
-                  nearby: finalNumber,
-                };
-              }
-
-              games[gameId] = {
-                gameId: gameId,
-                host: conn,
-                connections: [conn],
-                board,
-              };
-
-              send(conn, {
-                type: "createGame",
-                payload: {
-                  success: true,
-                  id: gameId,
-                  board: board,
-                },
-              });
-              break;
-            case "joinGame":
-              // TODO - Should really check if the game exists.
-              // eslint-disable-next-line no-prototype-builtins
-              if (!games.hasOwnProperty(data.payload.gameId))
-                return send(conn, {
-                  type: "error",
-                  payload: {
-                    message: "Invalid game id",
-                  },
-                });
-              games[data.payload.gameId].connections.push(conn);
-              send(conn, {
-                type: "joinGame",
-                payload: {
-                  success: true,
-                  id: parseInt(data.payload.gameId),
-                  board: games[data.payload.gameId].board,
-                },
-              });
-              break;
-            case "tileClick":
-              if ( data.payload.action === "flag" ) {
-                const tileData =
-                  games[data.payload.gameId].board[data.payload.tileId];
-                if (tileData.clicked) return;
-                games[data.payload.gameId].board[data.payload.tileId] = {
-                  ...tileData,
-                  flagged: !tileData.flagged,
-                };
-              } else {
-                const tileData =
-                  games[data.payload.gameId].board[data.payload.tileId];
-                if (tileData.flagged) return;
-                games[data.payload.gameId].board[data.payload.tileId] = {
-                  ...tileData,
-                  clicked: true,
-                };
-              }
-
-              broadcast(data.payload.gameId, {
-                type: "tileClick",
-                payload: {
-                  board: games[data.payload.gameId].board,
-                }
-              });
-              break;
-          }
+          data = VALID_INPUTS.parse(JSON.parse(message.toString()));
         } catch (e) {
-          console.log(e)
-          conn.close();
-          return;
+            conn.send(JSON.stringify({success: false, message: "Invalid format"}));
+            return;
         }
+
+        handleEvent(conn, player.uuid, data);
     });
 });
 
-const send = (conn: WebSocket, message: VALID_OUTPUTS) => {
-  conn.send(JSON.stringify(message));
-}
+const handleEvent = (conn: WebSocket, uuid: string, data: { [key: string]: any } ) => {
 
-const broadcast = (gameId: number, message: VALID_OUTPUTS) => {
-  games[gameId].connections.forEach(conn => {
-    conn.send(JSON.stringify(message));
-  });
+    //TODO: Add checks for json fields. For testing/beta we just expect the client to send the proper fields.
+    switch(data["type"]) {
+        case "createGame":
+            var gameId = ms.createGame(uuid, "default");
+            
+            ms.connections[uuid].gameId = gameId;
+            ms.games[gameId].players.push(uuid);
+
+            var board = generateBoard(8, 8);
+            ms.games[gameId].board = board;
+
+            ms.send(conn, {
+                type: "createGame",
+                payload: {
+                  success: true,
+                  gameId: gameId,
+                  board: board,
+                },
+              });
+            break;
+        
+        //TODO: Finish
+        /*case "startGame": 
+            // First start is only host
+            var player = ms.getPlayer(uuid); // No null check needed as player should exist
+            if(player.gameId == null) return conn.send(JSON.stringify({success: false, type: "startGame", message: "Player is not in a game"}));
+
+            // Request a field 
+            var game = ms.getGame(data["gameId"]);
+            if(game.host != uuid) return conn.send(JSON.stringify({success: false, type: "startGame", message: "Player is not the host"}));
+            
+            ms.getPlayer(game.host).conn.send(JSON.stringify({type: "request", requestType: "field"}));
+            
+            break;
+
+        //TODO: Finish
+        case "remakeGame":
+            //TODO: make host only?
+            var gameId = ms.getPlayer(uuid).gameId as number;
+            var game = ms.getGame(gameId);
+
+            conn.send(JSON.stringify({success: true, type: "remakeGame"}));
+            ms.broadcastMessage(ms.getPlayer(uuid).gameId, uuid, JSON.stringify({type: "remakeGame"}));
+            // Request a newly generated field from the host
+            ms.getPlayer(game.host).conn.send(JSON.stringify({type: "request", requestType: "field"}));
+
+            ms.games[gameId].state = GameState.INGAME;
+
+            break;
+        */
+        case "joinGame": 
+            const gameToJoin = data.payload.gameId;
+            //TODO: Add regex check for proper game id
+            if(ms.getGame(gameToJoin) == null) {
+                return ms.send(conn, {
+                    type: "error",
+                    payload: {
+                      message: "Invalid game id",
+                    },
+                  });
+            }
+
+            ms.games[gameToJoin].players.push(uuid);
+            ms.connections[uuid].gameId = gameToJoin;
+            ms.send(conn, {
+                type: "joinGame",
+                payload: {
+                  success: true,
+                  gameId: parseInt(data.payload.gameId),
+                  board: ms.games[data.payload.gameId].board,
+                },
+              });
+            break;
+
+        //TODO: Make
+        /*
+        case "gameEnd":
+            var gameId = (ms.getPlayer(uuid) as Player).gameId; //Null check? Player should exist
+            ms.games[gameId].state = GameState.ENDED;
+
+            // Add success or failure? Client handled?
+            ms.broadcastMessage(ms.getPlayer(uuid).gameId, uuid, JSON.stringify({type: "gameEnd"}));
+
+            break;
+        */
+        case "tileClick":
+            var gameId = (ms.getPlayer(uuid) as Player).gameId; //Null check? Player should exist
+            if ( data.payload.action === "flag" ) {
+              const tileData =
+                ms.games[data.payload.gameId].board[data.payload.tileId];
+              if (tileData.clicked) return;
+              ms.games[data.payload.gameId].board[data.payload.tileId] = {
+                ...tileData,
+                flagged: !tileData.flagged,
+              };
+            } else {
+              const tileData =
+                ms.games[data.payload.gameId].board[data.payload.tileId];
+              if (tileData.flagged) return;
+              ms.games[data.payload.gameId].board[data.payload.tileId] = {
+                ...tileData,
+                clicked: true,
+              };
+            }
+            
+            // Use "" to override uuid check
+            ms.broadcastMessage(data.payload.gameId, "", {
+                type: "tileClick",
+                payload: {
+                  board: ms.games[data.payload.gameId].board,
+                }});
+
+            ms.games[gameId].progress.push(data["field"]);
+            break;
+        
+        case "mouseMove":
+            ms.broadcastMessage(ms.getPlayer(uuid).gameId, uuid, {
+                type: "mouseMove", 
+                payload: {
+                    x: data["x"], 
+                    y: data["y"], 
+                    uuid
+                }});
+
+            break;
+    }
 }

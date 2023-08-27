@@ -6,6 +6,7 @@
     "dev": "ts-node ./main.ts"
   },
   "devDependencies": {
+    "@types/uuid": "^9.0.2",
     "typescript": "^4.9.3"
   },
   "dependencies": {
@@ -14,6 +15,7 @@
     "lodash": "^4.17.21",
     "schemas": "workspace:*",
     "ts-node": "^10.9.1",
+    "uuid": "^9.0.0",
     "ws": "^8.13.0",
     "zod": "^3.22.2"
   }

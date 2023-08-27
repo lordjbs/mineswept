@@ -14,7 +14,7 @@ export const JoinGameOutput = z.object({
   type: z.literal("joinGame"),
   payload: z.object({
     success: z.boolean(),
-    id: z.number(),
+    gameId: z.number(),
     board: z.array(TileState),
     message: z.string().optional(),
   }),

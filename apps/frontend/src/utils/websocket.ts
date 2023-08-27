@@ -21,7 +21,7 @@ ws.addEventListener("message", ({ data }) => {
       case "createGame":
         console.info(WEBSOCKET_LOGGER_PREFIX, "createGame", parsedData);
         useWebhook.setState({
-          gameId: parsedData.payload.id,
+          gameId: parsedData.payload.gameId,
           board: parsedData.payload.board,
         });
         break;
@@ -41,7 +41,7 @@ ws.addEventListener("message", ({ data }) => {
         } else {
           console.info(WEBSOCKET_LOGGER_PREFIX, "joinGame", parsedData);
           useWebhook.setState({
-            gameId: parsedData.payload.id,
+            gameId: parsedData.payload.gameId,
             board: parsedData.payload.board,
           });
         }
