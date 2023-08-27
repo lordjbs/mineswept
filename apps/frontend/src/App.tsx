@@ -1,23 +1,24 @@
-import { useState } from 'react'
 import './App.css'
+import Tile from './components/Tile'
+import Grid from './components/Grid'
+import { range } from 'lodash'
 
 function App() {
-  const [count, setCount] = useState(0)
+  // TODO
+  const COLUMN_SIZE = 10
+  const ROW_SIZE = 10
 
   return (
     <>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Grid>
+        {range(0,ROW_SIZE).map(() => {
+          return <div>
+            {range(0,COLUMN_SIZE).map(() => {
+              return <Tile bomb={false} flagged={false} clicked={false} setter={() => {}} />
+            })}
+          </div>
+        })}
+      </Grid>
     </>
   )
 }

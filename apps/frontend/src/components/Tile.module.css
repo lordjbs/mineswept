@@ -1,0 +1,27 @@
+:root {
+    --button-size: 2rem;
+}
+
+.root {
+    appearance: none;
+    background: none;
+    border: none;
+    width: var(--button-size);
+    height: var(--button-size);
+
+    background-image: url('/board/button.svg');
+    background-repeat: no-repeat;
+    background-size: 100%;
+}
+
+.clicked {
+    background-image: url('/board/field.svg');
+}
+
+.bomb {
+    background-image: url('/board/bomb-exploded.svg');
+}
+
+.flagged {
+    background-image: url('/board/flag.svg');
+}

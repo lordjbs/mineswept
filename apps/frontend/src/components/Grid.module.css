@@ -1,0 +1,13 @@
+.root {
+    border: var(--grid-border) solid transparent;
+    border-image: url('/border/inset-thick.svg') round;
+    border-image-slice: 18.75%;
+}
+
+.board {
+    display: flex;
+    flex-direction: column;
+    gap: var(--grid-gap);
+    background-image: url('/board/field.svg');
+    background-size: var(--button-size) var(--button-size);
+}
