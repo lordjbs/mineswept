@@ -1,4 +1,4 @@
-import { generateBoard } from "./Minesweeper";
+import { generateBoard, revealFields } from "./Minesweeper";
 import { MinesweptServer } from "./types/MinesweptWebsocket";
 import { Player } from "./types/Player";
 
@@ -131,6 +131,8 @@ const handleEvent = (conn: WebSocket, uuid: string, data: VALID_INPUTS) => {
         };
       }
 
+      revealFields(player.gameId, data.payload.tileId, undefined);
+
       // Use "" to override uuid check
       ms.broadcastMessage(data.payload.gameId, "", {
         type: "tileClick",
@@ -155,3 +157,6 @@ const handleEvent = (conn: WebSocket, uuid: string, data: VALID_INPUTS) => {
     }
   }
 };
+
+export { ms };
+

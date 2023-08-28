@@ -1,4 +1,5 @@
 import { range } from "lodash";
+import { ms } from './main';
 
 const generateBoard = (COLUMN_SIZE: number, ROW_SIZE: number) => {
   const board = range(0, 64).map(() => ({
@@ -69,4 +70,51 @@ const generateBoard = (COLUMN_SIZE: number, ROW_SIZE: number) => {
   return board;
 };
 
-export { generateBoard };
+const revealFields = (gameId: number, fieldNum: number, _checked: number[] | undefined) => {
+  const board = ms.games[gameId].board;
+
+  if (board[fieldNum].bomb || board[fieldNum].flagged) return;
+
+  const nearby: { [key: number]: boolean } = {}; // Weird hack TODO: FIX THIS!!
+
+  let checked: number[] = (_checked === undefined) ? [] : _checked;
+
+  if (fieldNum > 8) {
+    if (fieldNum % 8 != 7) nearby[(fieldNum - 7)] = true;
+    nearby[(fieldNum - 8)] = true;
+    if (fieldNum % 8 != 0) nearby[(fieldNum - 9)] = true;
+  }
+  if (fieldNum < ((8 * 8) - 8)) {
+    if (fieldNum % 8 != 0) nearby[fieldNum + 7] = true;
+    nearby[fieldNum + 8] = true;
+    if (fieldNum % 8 != 7) nearby[fieldNum + 9] = true;
+  }
+  if (fieldNum % 8 != 1 && fieldNum % 8 != 0) nearby[fieldNum - 1] = true;
+  if (fieldNum % 8 != 0 && fieldNum % 8 != 7) nearby[fieldNum + 1] = true;
+
+  for (const [_num, _] of Object.entries(nearby)) {
+    let num = parseInt(_num);
+    if (checked.includes(num)) return;
+    if (!board[num].clicked && !board[num].bomb) {
+      if (board[fieldNum].nearby > 0) {
+        if (board[num].nearby > 0) {
+          delete nearby[num];
+        }
+      } else {
+        board[num].clicked = true;
+      }
+      if (board[num].nearby > 0) {
+        delete nearby[num];
+      }
+    } else {
+      delete nearby[num];
+    }
+
+  }
+
+  for (const [num, _] of Object.entries(nearby)) {
+    revealFields(gameId, parseInt(num), checked);
+  }
+};
+
+export { generateBoard, revealFields };
